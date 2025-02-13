@@ -1,0 +1,44 @@
+# 全域忽略的檔案 (適用於所有子專案)
+node_modules/
+dist/
+build/
+.env
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 🟢 忽略 pnpm 工作區相關的鎖檔
+pnpm-lock.yaml
+
+# 🟢 Backend (Node.js + Express)
+backend/node_modules/
+backend/.env
+backend/.cache/
+backend/logs/
+backend/temp/
+
+# 🟢 Frontend (Vue.js)
+frontend/node_modules/
+frontend/.env
+frontend/.cache/
+frontend/dist/
+frontend/public/build/
+
+# 🟢 Blockchain (Hardhat)
+blockchain/node_modules/
+blockchain/.env
+blockchain/cache/
+blockchain/artifacts/
+
+# 🟢 Logs & Debug
+logs/
+debug.log
+error.log
