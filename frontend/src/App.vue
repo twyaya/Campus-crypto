@@ -1,6 +1,13 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
+<script>
+import ConnectWallet from "./components/ConnectWallet.vue";
+
+export default {
+  components: {
+    ConnectWallet,
+  },
+};
 </script>
+
 
 <template>
   <div>
@@ -12,9 +19,18 @@ import HelloWorld from './components/HelloWorld.vue'
     </a>
   </div>
   <HelloWorld msg="Vite + Vue" />
+  <div>
+    <h1>Campus Crypto</h1>
+    <ConnectWallet />
+  </div>
 </template>
 
+
 <style scoped>
+h1 {
+  text-align: center;
+  color: #42b983;
+}
 .logo {
   height: 6em;
   padding: 1.5em;

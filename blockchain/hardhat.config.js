@@ -6,7 +6,7 @@ module.exports = {
     ganache: {
       url: "http://127.0.0.1:7545", // Ganache 的本地鏈路
       accounts: [
-        '0xfe9f7b3731859e252bf1530e1aa7796b8db6c823a424f2e08b971bc0993191e0',
+        '0x4637ebc06e9e4c7b16e0f7c43dbd13724dabba126ece4bfc75be9ac49d3ee8f6',
       ]
     }
   }
