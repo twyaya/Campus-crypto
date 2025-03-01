@@ -1,12 +1,13 @@
 <template>
-    <div>
-      <button @click="connectWallet" v-if="!userAddress">
-        連接 MetaMask
-      </button>
-      <div v-else>
-        已連接: {{ userAddress }}
-      </div>
+  <div>
+    <!-- 使用 Vuetify 按鈕 -->
+    <v-btn @click="connectWallet" v-if="!userAddress" color="success">
+      連接 MetaMask
+    </v-btn>
+    <div v-else>
+      已連接: {{ userAddress }}
     </div>
+  </div>
 </template>
   
   <script>
@@ -40,14 +41,5 @@
   };
   </script>
   
-  <style scoped>
-  button {
-    padding: 10px;
-    background-color: #42b983;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  </style>
+
   
