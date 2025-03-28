@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>我的錢包</h1>
-    <v-btn @click="connectWallet" v-if="!userAddress" color="success">
+    <v-btn @click="connectWallet"  color="success">
       連接 MetaMask
     </v-btn>
     <p v-if="walletStore.account">帳戶: {{ walletStore.account }}</p>
