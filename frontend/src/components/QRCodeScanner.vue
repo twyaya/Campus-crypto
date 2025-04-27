@@ -27,8 +27,10 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { QrcodeStream } from "vue-qrcode-reader";
+import { useWalletStore } from "@/store/walletStore";
+import { ethers } from "ethers";
 
-// 掃描結果
+// 掃描結果與錯誤訊息
 const result = ref("");
 const error = ref("");
 
@@ -39,7 +41,7 @@ const cameraOptions = ref([
   { label: "前置相機", constraints: { facingMode: "user" } }
 ]);
 
-// 掃描條碼格式（可支援 QR Code / EAN / CODE128 等）
+// 掃描條碼格式
 const barcodeFormats = ref({
   qr_code: true,
   code_128: false,
@@ -52,9 +54,36 @@ const selectedBarcodeFormats = computed(() =>
 );
 
 // 偵測 QR Code
-function onDetect(detectedCodes) {
-  console.log("偵測到 QR Code:", detectedCodes);
-  result.value = detectedCodes.map((code) => code.rawValue).join(", ");
+const wallet = useWalletStore();
+async function onDetect(detectedCodes) {
+  try {
+    const raw = detectedCodes[0].rawValue;
+    console.log("掃描內容：", raw);
+    const data = JSON.parse(raw);
+
+    const toAddress = data.address;
+    const amount = data.amount;
+
+    if (!ethers.isAddress(toAddress)) {
+      error.value = "❌ 無效的錢包地址";
+      return;
+    }
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+
+    const tx = await signer.sendTransaction({
+      to: toAddress,
+      value: ethers.parseEther(amount.toString())
+    });
+
+    await tx.wait();
+    result.value = `✅ 已成功轉帳 ${amount} ETH 給 ${toAddress}`;
+    error.value = "";
+  } catch (err) {
+    console.error("轉帳錯誤：", err);
+    error.value = "❌ 轉帳失敗：" + err.message;
+  }
 }
 
 // 相機初始化
@@ -77,12 +106,13 @@ async function onCameraReady() {
   }
 }
 
-// 錯誤處理
+// 掃描錯誤處理
 function onError(err) {
   console.error("掃描錯誤:", err);
   error.value = `[${err.name}]: ${err.message}`;
 }
 </script>
+
 
 <style scoped>
 .error {

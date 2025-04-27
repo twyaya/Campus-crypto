@@ -1,4 +1,5 @@
 <template>
+
   <v-app id="inspire">
     <!-- App Bar -->
     <v-app-bar class="px-3" density="compact" flat>
@@ -39,4 +40,5 @@
 </template>
 
 <script setup>
+
 </script>

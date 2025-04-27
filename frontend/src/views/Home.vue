@@ -1,24 +1,12 @@
 <!-- frontend/src/views/Home.vue -->
 <template>
     <div>
-      <h2>歡迎來到 Campus Crypto</h2>
-      <p>這是一個加密貨幣平台。</p>
-
+      <v-img
+      :src="banner">
+      </v-img>
       <v-row>
-        <v-col col="12" md="3">
-          <v-card
-            class="mx-auto"
-            title="花費總額"
-          >
-          <template v-slot:prepend>
-            <v-avatar color="blue-darken-2">
-              <v-icon icon="mdi-currency-usd"></v-icon>
-            </v-avatar>
-          </template>
-          <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</v-card-text>
-        </v-card>
-        </v-col>
-        <v-col col="12" md="3">
+
+        <v-col cols="12" md="3">
                 <v-card
               class="mx-auto"
               max-width="344"
@@ -32,7 +20,7 @@
                 </v-card-title>
 
                 <v-card-subtitle>
-                  Card subtitle secondary text
+                  錢包內持有的ETH數量
                 </v-card-subtitle>
               </v-card-item>
 
@@ -42,28 +30,25 @@
               </v-card-text>
             </v-card>
         </v-col>
-        <v-col col="12" md="3">
-              <v-card
-            class="mx-auto"
-            max-width="344"
-            hover
-          >
-            <v-card-item>
-              <v-card-title>
-                <v-icon color="success" icon="mdi-antenna"></v-icon>
+        <v-col cols="12" md="3">
+                <v-card
+              class="mx-auto"
+              max-width="344"
+              hover
+            >
 
-                花費總額
-              </v-card-title>
+                <v-card-item>
+                  <v-card-title>
+                    <v-icon icon="mdi-ethereum"></v-icon>
+                    <p v-if="walletStore.balance">花費總額: ??? ETH</p>
+                </v-card-title>
 
-              <v-card-subtitle>
-                Card subtitle secondary text
-              </v-card-subtitle>
-            </v-card-item>
+                <v-card-subtitle>
+                  自連結錢包以來的花費總額
+                </v-card-subtitle>
+              </v-card-item>
 
-            <v-card-text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </v-card-text>
-          </v-card>
+            </v-card>
         </v-col>
       </v-row>
 
@@ -118,5 +103,6 @@
     walletStore.connectWallet()
   }
 
-  
+  import banner from '@/assets/banner.png'
+
   </script>
