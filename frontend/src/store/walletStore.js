@@ -1,10 +1,12 @@
+//wallet.Store.js
 import { defineStore } from 'pinia'
 import { ethers } from 'ethers'
 
 export const useWalletStore = defineStore('wallet', {
   state: () => ({
     account: null,
-    balance: '0'
+    balance: '0',
+    transactionHistory: []
   }),
   actions: {
     async connectWallet() {
@@ -56,6 +58,9 @@ export const useWalletStore = defineStore('wallet', {
       }
 
       this.transactionHistory = history
+      return history
+
+
     }
 
 

@@ -1,3 +1,4 @@
+<!-- App.vue -->
 <template>
 
   <v-app id="inspire">
