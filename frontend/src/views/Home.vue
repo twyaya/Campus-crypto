@@ -50,6 +50,32 @@
 
             </v-card>
         </v-col>
+        <v-col cols="12" md="3">
+          <v-card class="mx-auto" max-width="344" hover>
+            <v-card-item>
+              <v-card-title>
+                <v-icon icon="mdi-history"></v-icon>
+                <p v-if="walletStore.balance">交易紀錄</p>
+              </v-card-title>
+
+              <v-card-subtitle>
+                自連結錢包以來的交易紀錄
+              </v-card-subtitle>
+            </v-card-item>
+
+            <v-card-text>
+              <div v-if="transactions.length === 0">暫無交易紀錄</div>
+              <div v-else>
+                <div v-for="(tx, index) in transactions" :key="index">
+                  <p>From: {{ tx.from }}</p>
+                  <p>To: {{ tx.to }}</p>
+                  <p>Value: {{ tx.value }} ETH</p>
+                  <hr />
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
       </v-row>
 
       <v-row>
@@ -93,16 +119,16 @@
 
     </div>
   </template>
-  
   <script setup>
-  import { useWalletStore } from '@/store/walletStore'
-  
-  const walletStore = useWalletStore()
-  
-  function connectWallet() {
-    walletStore.connectWallet()
-  }
+    import { onMounted, ref, watch } from 'vue'
+    import { useWalletStore } from '@/store/walletStore'
+    import banner from '@/assets/banner.png'
 
-  import banner from '@/assets/banner.png'
+    const walletStore = useWalletStore()
+    const transactions = ref([])
 
-  </script>
+    onMounted(async () => {
+      await walletStore.connectWallet()
+      transactions.value = await walletStore.getTransactionHistory()
+    })
+</script>

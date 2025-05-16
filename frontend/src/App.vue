@@ -39,6 +39,15 @@
   </v-app>
 </template>
 
-<script setup>
 
+<!-- App.vue -->
+<script setup>
+import { onMounted } from 'vue'
+import { useWalletStore } from '@/store/walletStore'
+
+const walletStore = useWalletStore()
+
+onMounted(() => {
+  walletStore.connectWallet()
+})
 </script>
