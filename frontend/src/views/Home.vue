@@ -40,7 +40,7 @@
                 <v-card-item>
                   <v-card-title>
                     <v-icon icon="mdi-ethereum"></v-icon>
-                    <p v-if="walletStore.balance">花費總額: ??? ETH</p>
+                    <p>花費總額: {{ walletStore.getTotalSpent() }} ETH</p>
                 </v-card-title>
 
                 <v-card-subtitle>

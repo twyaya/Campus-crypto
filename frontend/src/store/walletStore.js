@@ -61,7 +61,14 @@ export const useWalletStore = defineStore('wallet', {
       return history
 
 
+    },
+    getTotalSpent() {
+      return this.transactionHistory
+        ?.filter(tx => tx.from?.toLowerCase() === this.account.toLowerCase())
+        ?.reduce((sum, tx) => sum + parseFloat(tx.value), 0)
+        ?.toFixed(4) || '0'
     }
+
 
 
   }
