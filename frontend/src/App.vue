@@ -16,11 +16,12 @@
           <router-link to="/wallet" class="tab-link"><v-tab>錢包</v-tab></router-link>
 
           <router-link to="/tasks" class="tab-link"><v-tab>任務</v-tab></router-link>
+
+          <router-link to="/store" class="tab-link"><v-tab>商店</v-tab></router-link>
          </v-tabs>
 
       <v-spacer></v-spacer>
       
-      <v-avatar class="hidden-sm-and-down" color="grey-darken-1" size="32"></v-avatar>
     </v-app-bar>
 
     <!-- Main Content -->
@@ -29,7 +30,6 @@
         
 
           <!-- Main Content Area -->
-          <!-- Main Content (Optional) -->
           <router-view /> 
           
 

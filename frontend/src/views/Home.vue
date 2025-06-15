@@ -16,7 +16,7 @@
                 <v-card-item>
                   <v-card-title>
                     <v-icon icon="mdi-ethereum"></v-icon>
-                    <p v-if="walletStore.balance">餘額: {{ walletStore.balance }} ETH</p>
+                    <span v-if="walletStore.balance">餘額: {{ walletStore.balance }} ETH</span>
                 </v-card-title>
 
                 <v-card-subtitle>
@@ -40,7 +40,7 @@
                 <v-card-item>
                   <v-card-title>
                     <v-icon icon="mdi-ethereum"></v-icon>
-                    <p>花費總額: {{ walletStore.getTotalSpent() }} ETH</p>
+                    <span>花費總額: {{ walletStore.getTotalSpent() }} ETH</span>
                 </v-card-title>
 
                 <v-card-subtitle>
@@ -55,7 +55,7 @@
             <v-card-item>
               <v-card-title>
                 <v-icon icon="mdi-history"></v-icon>
-                <p v-if="walletStore.balance">交易紀錄</p>
+                <span v-if="walletStore.balance">交易紀錄</span>
               </v-card-title>
 
               <v-card-subtitle>
@@ -78,41 +78,45 @@
         </v-col>
       </v-row>
 
-      <v-row>
-          <v-col md="6">
-        `      <v-card
-                class="mx-auto text-center"
-                color="green"
-                max-width="600"
-                dark
-              >
-            <v-card-text>
-              <v-sheet color="rgba(0, 0, 0, .12)">
-                <v-sparkline
-                  :model-value="[0, 446, 675, 510, 590, 610, 760]"
-                  color="rgba(255, 255, 255, .7)"
-                  height="100"
-                  padding="24"
-                  stroke-linecap="round"
-                  smooth
-                >
-                  <template v-slot:label="item">
-                    ${{ item.value }}
-                  </template>
-                </v-sparkline>
-              </v-sheet>
-            </v-card-text>
+    <v-card>
+      <v-card-title class="text-overline">
+        進度
 
-            <v-card-text>
-              <div class="text-h4 font-weight-thin">
-                餘額變化
-              </div>
-            </v-card-text>
+        <div class="text-green-darken-3 text-h3 font-weight-bold">90%</div>
 
-            <v-divider></v-divider>
-          </v-card>
-        </v-col>
-      </v-row>`
+        <div class="text-h6 text-medium-emphasis font-weight-regular">
+          $2,938.00 remaining
+        </div>
+      </v-card-title>
+      <v-card-text>
+
+        <v-progress-linear
+          color="green-darken-3"
+          height="22"
+          model-value="90"
+          rounded="lg"
+        >
+
+        </v-progress-linear>
+
+        <div class="d-flex justify-space-between py-3">
+          <span class="text-green-darken-3 font-weight-medium">
+            $26,442.00 remitted
+          </span>
+
+          <span class="text-medium-emphasis"> $29,380.00 total </span>
+        </div>
+      </v-card-text>
+
+      <v-divider></v-divider>
+
+      <v-list-item
+        append-icon="mdi-chevron-right"
+        lines="two"
+        subtitle="Details and agreement"
+        link
+      ></v-list-item>
+    </v-card>
 
 
 
@@ -124,6 +128,7 @@
     import { useWalletStore } from '@/store/walletStore'
     import banner from '@/assets/banner.png'
 
+
     const walletStore = useWalletStore()
     const transactions = ref([])
 
@@ -131,4 +136,7 @@
       await walletStore.connectWallet()
       transactions.value = await walletStore.getTransactionHistory()
     })
+
+    const review = ref("10%")
+
 </script>
