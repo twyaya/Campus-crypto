@@ -36,6 +36,8 @@
 
         
       </v-container>
+      <UserRoleSelector />
+
     </v-main>
   </v-app>
 </template>
@@ -45,6 +47,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useWalletStore } from '@/store/walletStore'
+import UserRoleSelector from './components/UserRoleSelector.vue'
 
 const walletStore = useWalletStore()
 

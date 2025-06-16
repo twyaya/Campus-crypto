@@ -1,27 +1,11 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+  const Token = await ethers.getContractFactory("MyToken");
+  const token = await Token.deploy(); // 這邊 deploy() 會送出交易
+  await token.deployed();             // ✅ 等待部署完成（這是正確的）
 
-  // 這裡修改成 20 ETH 比較有感覺
-  const lockedAmount = ethers.utils.parseEther("20");
-
-  // 獲取合約工廠
-  const Lock = await ethers.getContractFactory("Lock");
-
-  // 部署合約並傳遞參數
-  const lock = await Lock.deploy(unlockTime, {
-    value: lockedAmount,
-  });
-
-  await lock.deployed();
-
-  console.log(
-    `Lock with ${ethers.utils.formatEther(
-      lockedAmount
-    )} ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-  );
+  console.log("Token deployed to:", token.address);
 }
 
 main().catch((error) => {
