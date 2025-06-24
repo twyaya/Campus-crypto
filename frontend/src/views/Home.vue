@@ -4,9 +4,10 @@
       <v-img
       :src="banner">
       </v-img>
+      <br/>
       <v-row>
 
-        <v-col cols="12" md="3">
+        <v-col cols="12" md="4">
                 <v-card
               class="mx-auto"
               max-width="344"
@@ -20,7 +21,7 @@
                 </v-card-title>
 
                 <v-card-subtitle>
-                  錢包內持有的ETH數量
+                  你持有的ETH將用於支付手續費
                 </v-card-subtitle>
               </v-card-item>
 
@@ -30,7 +31,7 @@
               </v-card-text>
             </v-card>
         </v-col>
-        <v-col cols="12" md="3">
+        <v-col cols="12" md="4">
                 <v-card
               class="mx-auto"
               max-width="344"
@@ -40,11 +41,11 @@
                 <v-card-item>
                   <v-card-title>
                     <v-icon icon="mdi-ethereum"></v-icon>
-                    <span>花費總額: {{ walletStore.getTotalSpent() }} ETH</span>
+                    <span>ETH花費總額: {{ walletStore.getTotalSpent() }} ETH</span>
                 </v-card-title>
 
                 <v-card-subtitle>
-                  自連結錢包以來的花費總額
+                  自連結錢包以來的花費的手續費總額
                 </v-card-subtitle>
               </v-card-item>
 
@@ -77,47 +78,6 @@
           </v-card>
         </v-col>
       </v-row>
-
-    <v-card>
-      <v-card-title class="text-overline">
-        進度
-
-        <div class="text-green-darken-3 text-h3 font-weight-bold">90%</div>
-
-        <div class="text-h6 text-medium-emphasis font-weight-regular">
-          $2,938.00 remaining
-        </div>
-      </v-card-title>
-      <v-card-text>
-
-        <v-progress-linear
-          color="green-darken-3"
-          height="22"
-          model-value="90"
-          rounded="lg"
-        >
-
-        </v-progress-linear>
-
-        <div class="d-flex justify-space-between py-3">
-          <span class="text-green-darken-3 font-weight-medium">
-            $26,442.00 remitted
-          </span>
-
-          <span class="text-medium-emphasis"> $29,380.00 total </span>
-        </div>
-      </v-card-text>
-
-      <v-divider></v-divider>
-
-      <v-list-item
-        append-icon="mdi-chevron-right"
-        lines="two"
-        subtitle="Details and agreement"
-        link
-      ></v-list-item>
-    </v-card>
-
 
 
 

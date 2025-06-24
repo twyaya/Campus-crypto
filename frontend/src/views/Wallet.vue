@@ -5,7 +5,7 @@
       連接 MetaMask
     </v-btn>
     <p v-if="walletStore.account">帳戶: {{ walletStore.account }}</p>
-    <p v-if="walletStore.balance">餘額: {{ walletStore.balance }} ETH</p>
+    <p v-if="walletStore.balance">手續費餘額: {{ walletStore.balance }} ETH</p>
 
     <h2>掃描 QR Code 付款</h2>
     <QRCodeScanner />
