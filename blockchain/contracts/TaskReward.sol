@@ -5,42 +5,79 @@ import "./MyToken.sol";
 import "./UserRole.sol";
 
 contract TaskReward {
+    MyToken public token;
+    UserRole public userRole;
+
     struct Task {
         string description;
         uint256 reward;
-        bool completed;
-        address assignedTo;
+        uint256 maxClaims;
+        uint256 currentClaims;
+        address createdBy;
+        mapping(address => bool) hasClaimed;
     }
 
-    MyToken public token;
-    UserRole public userRole;
-    address public admin;
-
-    mapping(uint256 => Task) public tasks;
     uint256 public nextTaskId;
+    mapping(uint256 => Task) private _tasks;
 
-    modifier onlyAdmin() {
-        require(msg.sender == admin, "Not admin");
+    event TaskCreated(uint256 taskId, string description, uint256 reward, uint256 maxClaims);
+    event TaskCompleted(uint256 taskId, address user);
+
+    constructor(address tokenAddr, address roleAddr) {
+        token = MyToken(tokenAddr);
+        userRole = UserRole(roleAddr);
+    }
+
+    modifier onlyPublisher() {
+        UserRole.Role r = userRole.getRole(msg.sender);
+        require(r == UserRole.Role.Merchant || r == UserRole.Role.Admin, "Not allowed");
         _;
     }
 
-    constructor(address tokenAddress, address userRoleAddress) {
-        token = MyToken(tokenAddress);
-        userRole = UserRole(userRoleAddress);
-        admin = msg.sender;
-    }
+    function createTask(string memory desc, uint256 reward, uint256 maxClaims) external onlyPublisher {
+        Task storage t = _tasks[nextTaskId];
+        t.description = desc;
+        t.reward = reward;
+        t.maxClaims = maxClaims;
+        t.createdBy = msg.sender;
 
-    function createTask(string memory desc, uint256 reward, address assignedTo) public onlyAdmin {
-        tasks[nextTaskId] = Task(desc, reward, false, assignedTo);
+        emit TaskCreated(nextTaskId, desc, reward, maxClaims);
         nextTaskId++;
     }
 
-    function completeTask(uint256 taskId) public {
-        Task storage task = tasks[taskId];
-        require(msg.sender == task.assignedTo, "Not assigned user");
-        require(!task.completed, "Task already completed");
+    function completeTask(uint256 taskId) external {
+        Task storage t = _tasks[taskId];
 
-        task.completed = true;
-        token.transfer(task.assignedTo, task.reward * 10 ** token.decimals());
+        // 僅限學生身份完成任務
+        require(userRole.getRole(msg.sender) == UserRole.Role.Student, "Only students can complete tasks");
+
+        require(t.currentClaims < t.maxClaims, "Max claims reached");
+        require(!t.hasClaimed[msg.sender], "Already claimed");
+
+        // 商家必須先 approve 給本合約
+        bool success = token.transferFrom(t.createdBy, msg.sender, t.reward);
+        require(success, "Token transfer failed");
+
+        t.hasClaimed[msg.sender] = true;
+        t.currentClaims++;
+
+        emit TaskCompleted(taskId, msg.sender);
+    }
+
+
+    // 提供外部查詢任務資訊（不含 mapping）
+    function getTask(uint256 taskId) external view returns (
+        string memory description,
+        uint256 reward,
+        uint256 maxClaims,
+        uint256 currentClaims,
+        address createdBy
+    ) {
+        Task storage t = _tasks[taskId];
+        return (t.description, t.reward, t.maxClaims, t.currentClaims, t.createdBy);
+    }
+
+    function hasUserClaimed(uint256 taskId, address user) external view returns (bool) {
+        return _tasks[taskId].hasClaimed[user];
     }
 }

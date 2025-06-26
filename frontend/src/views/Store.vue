@@ -47,7 +47,7 @@
       <div class="my-4 text-subtitle-1">
         憑本券可兌換中杯拿鐵或美式乙杯(限校內使用)
       </div>
-      <v-chip>100 ETH</v-chip>
+      <v-chip>100 MTK</v-chip>
     </v-card-text>
 
     <v-divider class="mx-4 mb-1"></v-divider>

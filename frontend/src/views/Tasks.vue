@@ -6,12 +6,12 @@
       <v-data-table
         :headers="headers"
         :items="tasks"
-        item-value="name"
+        item-value="taskId"
         class="elevation-1"
       >
-        <template #item.difficulty="{ item }">
-          <v-chip :color="difficultyColor(item.difficulty)" class="text-white" size="small">
-            {{ item.difficulty }}
+        <template #item.completed="{ item }">
+          <v-chip :color="item.completed ? 'green' : 'grey'" class="text-white" size="small">
+            {{ item.completed ? '已完成' : '未完成' }}
           </v-chip>
         </template>
       </v-data-table>
@@ -20,26 +20,47 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { ethers } from 'ethers'
+//import taskRewardABI from '@/abi/TaskReward.json' // 你需要把 ABI 放到 src/abi 裡
 
 const headers = ref([
-  { title: '任務名稱', key: 'name' },
-  { title: '獎勵貨幣數量', key: 'reward' },
-  { title: '任務難度', key: 'difficulty' }
+  { title: '任務編號', key: 'taskId' },
+  { title: '內容', key: 'description' },
+  { title: '獎勵', key: 'reward' },
+  { title: '完成狀態', key: 'completed' },
+  { title: '指派對象', key: 'assignedTo' },
 ])
 
-const tasks = ref([
-  { name: '完成問卷填寫', reward: 5, difficulty: '簡易' },
-  { name: '參加商家互動活動', reward: 10, difficulty: '普通' },
-  { name: '完成一週內消費任務', reward: 20, difficulty: '困難' }
-])
+const tasks = ref([])
 
-const difficultyColor = (difficulty) => {
-  switch (difficulty) {
-    case '簡易': return 'green'
-    case '普通': return 'orange'
-    case '困難': return 'red'
-    default: return 'grey'
+const contractAddress = '放上你的 TaskReward 合約地址' // e.g. 0x123...
+
+const loadTasks = async () => {
+  try {
+    const provider = new ethers.BrowserProvider(window.ethereum)
+    const contract = new ethers.Contract(contractAddress, taskRewardABI, await provider.getSigner())
+
+    // 任務是依照 taskId 累加的，因此我們要查找 nextTaskId 來知道有幾筆
+    const nextId = await contract.nextTaskId()
+
+    const taskList = []
+    for (let i = 0; i < nextId; i++) {
+      const task = await contract.tasks(i)
+      taskList.push({
+        taskId: i,
+        description: task.description,
+        reward: Number(task.reward),
+        completed: task.completed,
+        assignedTo: task.assignedTo,
+      })
+    }
+
+    tasks.value = taskList
+  } catch (err) {
+    console.error('任務讀取失敗:', err)
   }
 }
+
+onMounted(loadTasks)
 </script>
