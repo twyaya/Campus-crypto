@@ -1,12 +1,21 @@
 //wallet.Store.js
 import { defineStore } from 'pinia'
 import { ethers } from 'ethers'
+import { CONTRACT_ADDRESSES } from '@/contracts/addresses'
+
+const MTK_ADDRESS = CONTRACT_ADDRESSES.token
+const MTK_ABI = [
+  "event Transfer(address indexed from, address indexed to, uint256 value)",
+  "function balanceOf(address) view returns (uint256)",
+  "function decimals() view returns (uint8)"
+]
 
 export const useWalletStore = defineStore('wallet', {
   state: () => ({
     account: null,
     balance: '0',
-    transactionHistory: []
+    transactionHistory: [],
+    mtkTransfers: []
   }),
   actions: {
     async connectWallet() {
@@ -61,6 +70,34 @@ export const useWalletStore = defineStore('wallet', {
       return history
 
 
+    },
+    async getMTKTransfers() {
+      if (!this.account) return [];
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const token = new ethers.Contract(MTK_ADDRESS, MTK_ABI, provider);
+      const decimals = await token.decimals();
+      const filter = token.filters.Transfer(this.account, null);
+      const logs = await token.queryFilter(filter, -10000);
+      const transfers = logs.map(log => ({
+        from: log.args.from,
+        to: log.args.to,
+        value: ethers.formatUnits(log.args.value, decimals)
+      }));
+      this.mtkTransfers = transfers;
+      return transfers;
+    },
+    getTotalMTKSpent() {
+      return this.mtkTransfers
+        ?.reduce((sum, tx) => sum + parseFloat(tx.value), 0)
+        ?.toFixed(4) || '0';
+    },
+    async getMTKBalance() {
+      if (!this.account) return "0";
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const token = new ethers.Contract(MTK_ADDRESS, MTK_ABI, provider);
+      const decimals = await token.decimals();
+      const balance = await token.balanceOf(this.account);
+      return ethers.formatUnits(balance, decimals);
     },
     getTotalSpent() {
       return this.transactionHistory

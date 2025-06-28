@@ -1,0 +1,14 @@
+{
+  "abi": [
+    {"inputs":[{"internalType":"address","name":"tokenAddr","type":"address"},{"internalType":"address","name":"roleAddr","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},
+    {"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"taskId","type":"uint256"},{"indexed":false,"internalType":"address","name":"user","type":"address"}],"name":"TaskCompleted","type":"event"},
+    {"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"taskId","type":"uint256"},{"indexed":false,"internalType":"string","name":"description","type":"string"},{"indexed":false,"internalType":"uint256","name":"reward","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"maxClaims","type":"uint256"}],"name":"TaskCreated","type":"event"},
+    {"inputs":[{"internalType":"uint256","name":"taskId","type":"uint256"}],"name":"completeTask","outputs":[],"stateMutability":"nonpayable","type":"function"},
+    {"inputs":[{"internalType":"string","name":"desc","type":"string"},{"internalType":"uint256","name":"reward","type":"uint256"},{"internalType":"uint256","name":"maxClaims","type":"uint256"}],"name":"createTask","outputs":[],"stateMutability":"nonpayable","type":"function"},
+    {"inputs":[{"internalType":"uint256","name":"taskId","type":"uint256"}],"name":"getTask","outputs":[{"internalType":"string","name":"description","type":"string"},{"internalType":"uint256","name":"reward","type":"uint256"},{"internalType":"uint256","name":"maxClaims","type":"uint256"},{"internalType":"uint256","name":"currentClaims","type":"uint256"},{"internalType":"address","name":"createdBy","type":"address"}],"stateMutability":"view","type":"function"},
+    {"inputs":[{"internalType":"uint256","name":"taskId","type":"uint256"},{"internalType":"address","name":"user","type":"address"}],"name":"hasUserClaimed","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+    {"inputs":[],"name":"nextTaskId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+    {"inputs":[],"name":"token","outputs":[{"internalType":"contract MyToken","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+    {"inputs":[],"name":"userRole","outputs":[{"internalType":"contract UserRole","name":"","type":"address"}],"stateMutability":"view","type":"function"}
+  ]
+}

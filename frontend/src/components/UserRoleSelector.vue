@@ -15,13 +15,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ethers } from 'ethers' // ethers v6 匯入方式一樣
+import { CONTRACT_ADDRESSES } from '@/contracts/addresses'
 
 const dialog = ref(false)
 const walletAddress = ref('')
 const roleMap = { Student: 1, Merchant: 2, Admin: 3 }
 
 // 替換為你的部署合約資料
-const contractAddress = ''
+const contractAddress = CONTRACT_ADDRESSES.userRole
 const userRoleABI = [
   'function setRole(address user, uint8 role) public',
   'function getRole(address user) public view returns (uint8)'

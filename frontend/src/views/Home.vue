@@ -6,20 +6,24 @@
       </v-img>
       <br/>
       <v-row>
-        <v-col cols="12" md="4">
-          <v-card class="mx-auto" max-width="368">
-            <v-card-item title="持有的MTK">
-              <template v-slot:subtitle> 可用於商店交易 </template>
-            </v-card-item>
-
-            <v-card-text class="py-0">
-              <v-row align="center" no-gutters>
-                <v-icon color="error" icon="mdi-ethereum" size="60"></v-icon>
-                <v-col class="text-h2" cols="6"> 64 </v-col>
-              </v-row>
-            </v-card-text>
-          </v-card>
-        </v-col>
+          <v-col cols="12" md="4">
+              <v-card class="mx-auto" max-width="368">
+                <v-card-item title="持有的MTK">
+                  <template v-slot:subtitle> 可用於商店交易 </template>
+                </v-card-item>
+                <v-card-text class="py-0">
+                  <v-row align="center" no-gutters>
+                    <v-icon color="error" icon="mdi-alpha-t-box" size="60"></v-icon>
+                    <v-col class="text-h2" cols="6">
+                      {{ mtkBalance }}
+                    </v-col>
+                  </v-row>
+                  <v-card-item>
+                    <p v-if="walletStore.account">帳戶: {{ walletStore.account }}</p>
+                  </v-card-item>
+                </v-card-text>
+              </v-card>
+            </v-col>
         <v-col cols="12" md="4">
                 <v-card
               class="mx-auto"
@@ -30,11 +34,11 @@
                 <v-card-item>
                   <v-card-title>
                     <v-icon icon="mdi-ethereum"></v-icon>
-                    <span>ETH花費總額: {{ walletStore.getTotalSpent() }} ETH</span>
+                    <span>MTK花費總額: {{ walletStore.getTotalMTKSpent() }} MTK</span>
                 </v-card-title>
 
                 <v-card-subtitle>
-                  自連結錢包以來的花費的手續費總額
+                  自連結錢包以來的花費的MTK總額
                 </v-card-subtitle>
               </v-card-item>
 
@@ -46,7 +50,7 @@
             color="#26c6da"
             max-width="400"
             prepend-icon="mdi-twitter"
-            title="來自開發者的提醒"
+            title="提醒"
           >
             <v-card-text class="text-h6 py-2">
               "MTK用於商店交易而ETH則用於手續費"
@@ -61,9 +65,8 @@
                   ></v-avatar>
                 </template>
 
-                <v-list-item-title>HAOWEI</v-list-item-title>
+                <v-list-item-title>開發者</v-list-item-title>
 
-                <v-list-item-subtitle>開發者</v-list-item-subtitle>
 
                 <template v-slot:append>
                   <div class="justify-self-end">
@@ -99,10 +102,7 @@
                 </v-card-subtitle>
               </v-card-item>
 
-              <v-card-text>
-                <p v-if="walletStore.account">帳戶: {{ walletStore.account }}</p>
-                
-              </v-card-text>
+
             </v-card>
         </v-col>
         <v-col cols="12" md="4">
@@ -113,14 +113,14 @@
             >
 
                 <v-card-item>
-                  <v-card-title>
-                    <v-icon icon="mdi-ethereum"></v-icon>
-                    <span>ETH花費總額: {{ walletStore.getTotalSpent() }} ETH</span>
-                </v-card-title>
+                    <v-card-title>
+                      <v-icon icon="mdi-ethereum"></v-icon>
+                      <span>ETH花費總額: {{ walletStore.getTotalSpent() }} ETH</span>
+                  </v-card-title>
 
-                <v-card-subtitle>
-                  自連結錢包以來的花費的手續費總額
-                </v-card-subtitle>
+                  <v-card-subtitle>
+                    自連結錢包以來的花費的手續費總額
+                  </v-card-subtitle>
               </v-card-item>
 
             </v-card>
@@ -165,12 +165,16 @@
 
     const walletStore = useWalletStore()
     const transactions = ref([])
+    const mtkBalance = ref("0")
 
     onMounted(async () => {
       await walletStore.connectWallet()
       transactions.value = await walletStore.getTransactionHistory()
+      mtkBalance.value = await walletStore.getMTKBalance()
+      await walletStore.getMTKTransfers() // 新增
+
     })
 
-    const review = ref("10%")
+
 
 </script>

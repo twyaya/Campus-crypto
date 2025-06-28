@@ -22,7 +22,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ethers } from 'ethers'
-//import taskRewardABI from '@/abi/TaskReward.json' // 你需要把 ABI 放到 src/abi 裡
+import { CONTRACT_ADDRESSES } from '@/contracts/addresses'
+import taskRewardABI from '@/abi/TaskReward.json' // 請確保 ABI 已放到 src/abi 目錄
 
 const headers = ref([
   { title: '任務編號', key: 'taskId' },
@@ -34,16 +35,13 @@ const headers = ref([
 
 const tasks = ref([])
 
-const contractAddress = '放上你的 TaskReward 合約地址' // e.g. 0x123...
+const contractAddress = CONTRACT_ADDRESSES.taskReward
 
 const loadTasks = async () => {
   try {
     const provider = new ethers.BrowserProvider(window.ethereum)
-    const contract = new ethers.Contract(contractAddress, taskRewardABI, await provider.getSigner())
-
-    // 任務是依照 taskId 累加的，因此我們要查找 nextTaskId 來知道有幾筆
+    const contract = new ethers.Contract(contractAddress, taskRewardABI, provider)
     const nextId = await contract.nextTaskId()
-
     const taskList = []
     for (let i = 0; i < nextId; i++) {
       const task = await contract.tasks(i)
@@ -55,7 +53,6 @@ const loadTasks = async () => {
         assignedTo: task.assignedTo,
       })
     }
-
     tasks.value = taskList
   } catch (err) {
     console.error('任務讀取失敗:', err)
