@@ -13,8 +13,8 @@
                 </v-card-item>
                 <v-card-text class="py-0">
                   <v-row align="center" no-gutters>
-                    <v-icon color="error" icon="mdi-alpha-t-box" size="60"></v-icon>
-                    <v-col class="text-h2" cols="6">
+                    <v-icon color="error" icon="mdi-alpha-t-box" size="55"></v-icon>
+                    <v-col class="text-h3" cols="8">
                       {{ mtkBalance }}
                     </v-col>
                   </v-row>

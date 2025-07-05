@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 import { CONTRACT_ADDRESSES } from '@/contracts/addresses'
 
 const MTK_ADDRESS = CONTRACT_ADDRESSES.token
-const MTK_ABI = [
+const MTK_ABI = [   // MTK 合約的 ABI
   "event Transfer(address indexed from, address indexed to, uint256 value)",
   "function balanceOf(address) view returns (uint256)",
   "function decimals() view returns (uint8)"
@@ -39,7 +39,7 @@ export const useWalletStore = defineStore('wallet', {
     async getTransactionHistory() {
       const provider = new ethers.BrowserProvider(window.ethereum)
       const latestBlock = await provider.getBlockNumber()
-      const START_BLOCK = Math.max(0, latestBlock - 100)
+      const START_BLOCK = Math.max(0, latestBlock - 100) // 取得最近100個區塊的交易歷史
       const history = []
 
       for (let i = latestBlock; i >= START_BLOCK; i--) {
@@ -77,7 +77,7 @@ export const useWalletStore = defineStore('wallet', {
       const token = new ethers.Contract(MTK_ADDRESS, MTK_ABI, provider);
       const decimals = await token.decimals();
       const filter = token.filters.Transfer(this.account, null);
-      const logs = await token.queryFilter(filter, -10000);
+      const logs = await token.queryFilter(filter, -10000); // 查詢最近10000個轉帳事件
       const transfers = logs.map(log => ({
         from: log.args.from,
         to: log.args.to,
@@ -94,7 +94,7 @@ export const useWalletStore = defineStore('wallet', {
     async getMTKBalance() {
       if (!this.account) return "0";
       const provider = new ethers.BrowserProvider(window.ethereum);
-      const token = new ethers.Contract(MTK_ADDRESS, MTK_ABI, provider);
+      const token = new ethers.Contract(MTK_ADDRESS, MTK_ABI, provider); // MTK 合約地址
       const decimals = await token.decimals();
       const balance = await token.balanceOf(this.account);
       return ethers.formatUnits(balance, decimals);

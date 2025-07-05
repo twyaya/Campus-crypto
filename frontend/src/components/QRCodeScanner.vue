@@ -29,6 +29,7 @@ import { ref, computed, onMounted } from "vue";
 import { QrcodeStream } from "vue-qrcode-reader";
 import { useWalletStore } from "@/store/walletStore";
 import { ethers } from "ethers";
+import { CONTRACT_ADDRESSES } from '@/contracts/addresses';
 
 // 掃描結果與錯誤訊息
 const result = ref("");
@@ -63,6 +64,7 @@ async function onDetect(detectedCodes) {
 
     const toAddress = data.address;
     const amount = data.amount;
+    const token = data.token || "ETH";
 
     if (!ethers.isAddress(toAddress)) {
       error.value = "❌ 無效的錢包地址";
@@ -72,13 +74,26 @@ async function onDetect(detectedCodes) {
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
 
-    const tx = await signer.sendTransaction({
-      to: toAddress,
-      value: ethers.parseEther(amount.toString())
-    });
-
-    await tx.wait();
-    result.value = `✅ 已成功轉帳 ${amount} ETH 給 ${toAddress}`;
+    if (token === "MTK") {
+      // MTK 代幣轉帳
+      const MTK_ABI = [
+        "function transfer(address to, uint256 amount) public returns (bool)",
+        "function decimals() view returns (uint8)"
+      ];
+      const tokenContract = new ethers.Contract(CONTRACT_ADDRESSES.token, MTK_ABI, signer);
+      const decimals = await tokenContract.decimals();
+      const tx = await tokenContract.transfer(toAddress, ethers.parseUnits(amount.toString(), decimals));
+      await tx.wait();
+      result.value = `✅ 已成功轉帳 ${amount} MTK 給 ${toAddress}`;
+    } else {
+      // ETH 轉帳
+      const tx = await signer.sendTransaction({
+        to: toAddress,
+        value: ethers.parseEther(amount.toString())
+      });
+      await tx.wait();
+      result.value = `✅ 已成功轉帳 ${amount} ETH 給 ${toAddress}`;
+    }
     error.value = "";
   } catch (err) {
     console.error("轉帳錯誤：", err);
