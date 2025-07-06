@@ -20,6 +20,13 @@
                   </v-row>
                   <v-card-item>
                     <p v-if="walletStore.account">帳戶: {{ walletStore.account }}</p>
+                    <p v-if="walletStore.currentRole !== null">
+                      目前身分：
+                      <span v-if="walletStore.currentRole === 1">學生</span>
+                      <span v-else-if="walletStore.currentRole === 2">商家</span>
+                      <span v-else-if="walletStore.currentRole === 3">管理員</span>
+                      <span v-else>未知</span>
+                    </p>
                   </v-card-item>
                 </v-card-text>
               </v-card>
@@ -169,6 +176,7 @@
 
     onMounted(async () => {
       await walletStore.connectWallet()
+      await walletStore.fetchCurrentRole() // 新增這行
       transactions.value = await walletStore.getTransactionHistory()
       mtkBalance.value = await walletStore.getMTKBalance()
       await walletStore.getMTKTransfers() // 新增

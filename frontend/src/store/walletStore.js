@@ -2,8 +2,10 @@
 import { defineStore } from 'pinia'
 import { ethers } from 'ethers'
 import { CONTRACT_ADDRESSES } from '@/contracts/addresses'
+import userRoleABI from '@/abi/UserRole.json'
 
 const MTK_ADDRESS = CONTRACT_ADDRESSES.token
+const USER_ROLE_ADDRESS = CONTRACT_ADDRESSES.userRole;
 const MTK_ABI = [   // MTK 合約的 ABI
   "event Transfer(address indexed from, address indexed to, uint256 value)",
   "function balanceOf(address) view returns (uint256)",
@@ -15,7 +17,8 @@ export const useWalletStore = defineStore('wallet', {
     account: null,
     balance: '0',
     transactionHistory: [],
-    mtkTransfers: []
+    mtkTransfers: [],
+    currentRole: null
   }),
   actions: {
     async connectWallet() {
@@ -104,9 +107,18 @@ export const useWalletStore = defineStore('wallet', {
         ?.filter(tx => tx.from?.toLowerCase() === this.account.toLowerCase())
         ?.reduce((sum, tx) => sum + parseFloat(tx.value), 0)
         ?.toFixed(4) || '0'
-    }
-
-
+    },
+    async fetchCurrentRole() {
+      if (!this.account) {
+        this.currentRole = null;
+        return null;
+      }
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const contract = new ethers.Contract(USER_ROLE_ADDRESS, userRoleABI, provider);
+      const role = await contract.getRole(this.account);
+      this.currentRole = Number(role);
+      return this.currentRole;
+    },
 
   }
 })

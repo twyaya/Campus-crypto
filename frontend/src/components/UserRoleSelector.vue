@@ -42,8 +42,12 @@ onMounted(async () => {
     const contract = new ethers.Contract(contractAddress, userRoleABI, provider)
     const role = await contract.getRole(walletAddress.value)
 
+    // 如果是管理員(3)或商家(2)或學生(1)，都不跳出選擇器
+    // 只有角色為0(未設定)才跳出
     if (Number(role) === 0) {
       dialog.value = true
+    } else {
+      dialog.value = false
     }
   } catch (err) {
     console.error('初始化角色選擇器時發生錯誤：', err)
