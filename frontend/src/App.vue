@@ -51,7 +51,27 @@
         
       </v-container>
       <UserRoleSelector />
+        <v-footer class="text-center d-flex flex-column ga-2 py-4" color="indigo-lighten-1">
+    <div class="d-flex ga-3">
+      <v-btn
+        v-for="icon in icons"
+        :key="icon"
+        :icon="icon"
+        density="comfortable"
+        variant="text"
+      ></v-btn>
+    </div>
 
+    <v-divider class="my-2" thickness="2" width="50"></v-divider>
+
+    <div class="text-caption font-weight-regular opacity-60">
+本系統使用 MetaMask 作為區塊鏈互動介面，僅用於身份驗證與任務獎勵代幣接收。所有代幣不可兌換現金，僅限於校內封閉平台中兌換指定商品券或虛擬資產（如 NFT）。本系統不涉及任何金融交易或匯兌行為，完全符合法律規範。    </div>
+    <v-divider></v-divider>
+
+    <div>
+      {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
+    </div>
+  </v-footer>
     </v-main>
   </v-app>
 </template>

@@ -44,6 +44,7 @@ Campus-crypto/
 - **src/components/UserRoleSelector.vue**：角色綁定。
 - **src/views/Tasks.vue**：任務清單與互動。
 - **src/views/Home.vue**：顯示 MTK 餘額、花費等。
+- **src/views/TaskPublish.vue**:任務發布頁面。
 
 ---
 

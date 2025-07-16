@@ -7,7 +7,7 @@
       <br/>
       <v-row>
           <v-col cols="12" md="4">
-              <v-card class="mx-auto" max-width="368">
+              <v-card class="mx-auto" max-width="368" hover>
                 <v-card-item title="持有的MTK">
                   <template v-slot:subtitle> 可用於商店交易 </template>
                 </v-card-item>
@@ -40,7 +40,7 @@
 
                 <v-card-item>
                   <v-card-title>
-                    <v-icon icon="mdi-ethereum"></v-icon>
+                    <v-icon color="error" icon="mdi-alpha-t-box"></v-icon>
                     <span>MTK花費總額: {{ walletStore.getTotalMTKSpent() }} MTK</span>
                 </v-card-title>
 
@@ -146,12 +146,39 @@
             </v-card-item>
 
             <v-card-text>
-              <div v-if="transactions.length === 0">暫無交易紀錄</div>
+              <div v-if="transactions.length === 0 && walletStore.mtkTransfers.length === 0">暫無交易紀錄</div>
               <div v-else>
-                <div v-for="(tx, index) in transactions" :key="index">
+                <!-- ETH 交易紀錄 -->
+                <div v-for="(tx, index) in transactions.slice(0, 10)" :key="'eth-' + index">
                   <p>From: {{ tx.from }}</p>
                   <p>To: {{ tx.to }}</p>
                   <p>Value: {{ tx.value }} ETH</p>
+                  <v-chip
+                    v-if="tx.to === null || tx.to === undefined"
+                    color="primary"
+                    size="small"
+                    class="ma-1"
+                  >發行智能合約</v-chip>
+                  <v-chip
+                    v-else-if="tx.from && tx.to && tx.value !== '0.0'"
+                    color="success"
+                    size="small"
+                    class="ma-1"
+                  >轉帳</v-chip>
+                  <v-chip
+                    v-else
+                    color="grey"
+                    size="small"
+                    class="ma-1"
+                  >其他</v-chip>
+                  <hr />
+                </div>
+                <!-- MTK 交易紀錄 -->
+                <div v-for="(mtk, idx) in walletStore.mtkTransfers.slice(0, 10)" :key="'mtk-' + idx">
+                  <p>From: {{ mtk.from }}</p>
+                  <p>To: {{ mtk.to }}</p>
+                  <p>Value: {{ mtk.value }} MTK</p>
+                  <v-chip color="success" size="small" class="ma-1">轉帳</v-chip>
                   <hr />
                 </div>
               </div>
