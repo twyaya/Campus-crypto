@@ -4,6 +4,12 @@
       <v-card-title>發布新任務</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="publishTask">
+          <v-text-field v-model="taskName" label="任務名稱" required></v-text-field>
+          <v-radio-group v-model="taskType" label="任務類型" row>
+            <v-radio label="消費" value="消費"></v-radio>
+            <v-radio label="問卷填寫" value="問卷填寫"></v-radio>
+            <v-radio label="參與活動" value="參與活動"></v-radio>
+          </v-radio-group>
           <v-text-field v-model="desc" label="任務內容" required></v-text-field>
           <v-text-field v-model.number="reward" label="獎勵金額 (MTK)" type="number" min="1" required></v-text-field>
           <v-text-field v-model.number="maxClaims" label="可領取人數" type="number" min="1" required></v-text-field>
@@ -22,6 +28,8 @@ import { ethers } from 'ethers'
 import { CONTRACT_ADDRESSES } from '@/contracts/addresses'
 import taskRewardABI from '@/abi/TaskReward.json'
 
+const taskName = ref('')
+const taskType = ref('消費')
 const desc = ref('')
 const reward = ref(1)
 const maxClaims = ref(1)
@@ -40,9 +48,13 @@ async function publishTask() {
     const contract = new ethers.Contract(CONTRACT_ADDRESSES.taskReward, taskRewardABI.abi, signer)
     // reward 單位為 MTK，需轉成最小單位
     const decimals = 18
-    const tx = await contract.createTask(desc.value, ethers.parseUnits(reward.value.toString(), decimals), maxClaims.value)
+    // 將任務名稱、類型、內容合併為 description
+    const fullDesc = `[${taskName.value}] [${taskType.value}] ${desc.value}`
+    const tx = await contract.createTask(fullDesc, ethers.parseUnits(reward.value.toString(), decimals), maxClaims.value)
     await tx.wait()
     successMsg.value = '✅ 任務已成功發布！'
+    taskName.value = ''
+    taskType.value = '消費'
     desc.value = ''
     reward.value = 1
     maxClaims.value = 1
