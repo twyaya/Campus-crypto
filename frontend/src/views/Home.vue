@@ -132,12 +132,15 @@
 
             </v-card>
         </v-col>
-        <v-col cols="12" md="3">
-          <v-card class="mx-auto" max-width="344" hover>
+
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="4">
+          <v-card class="mx-auto" hover>
             <v-card-item>
               <v-card-title>
                 <v-icon icon="mdi-history"></v-icon>
-                <span v-if="walletStore.balance">交易紀錄</span>
+                <span v-if="walletStore.balance">智能合約與ETH交易紀錄</span>
               </v-card-title>
 
               <v-card-subtitle>
@@ -173,6 +176,26 @@
                   >其他</v-chip>
                   <hr />
                 </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="12" md="4">
+          <v-card class="mx-auto" hover>
+            <v-card-item>
+              <v-card-title>
+                <v-icon icon="mdi-history"></v-icon>
+                <span v-if="walletStore.balance">MTK交易紀錄</span>
+              </v-card-title>
+
+              <v-card-subtitle>
+                自連結錢包以來的MTK交易紀錄
+              </v-card-subtitle>
+            </v-card-item>
+
+            <v-card-text>
+              <div v-if="transactions.length === 0 && walletStore.mtkTransfers.length === 0">暫無交易紀錄</div>
+              <div v-else>
                 <!-- MTK 交易紀錄 -->
                 <div v-for="(mtk, idx) in walletStore.mtkTransfers.slice(0, 10)" :key="'mtk-' + idx">
                   <p>From: {{ mtk.from }}</p>
@@ -186,7 +209,6 @@
           </v-card>
         </v-col>
       </v-row>
-
 
 
     </div>

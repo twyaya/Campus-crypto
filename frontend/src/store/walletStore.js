@@ -79,13 +79,32 @@ export const useWalletStore = defineStore('wallet', {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const token = new ethers.Contract(MTK_ADDRESS, MTK_ABI, provider);
       const decimals = await token.decimals();
-      const filter = token.filters.Transfer(this.account, null);
-      const logs = await token.queryFilter(filter, -10000); // 查詢最近10000個轉帳事件
-      const transfers = logs.map(log => ({
+
+      const latestBlock = await provider.getBlockNumber();
+      const fromBlock = Math.max(0, latestBlock - 10000);
+
+      // 查詢你是 from 的
+      const filterFrom = token.filters.Transfer(this.account, null);
+      const logsFrom = await token.queryFilter(filterFrom, fromBlock, latestBlock);
+
+      // 查詢你是 to 的
+      const filterTo = token.filters.Transfer(null, this.account);
+      const logsTo = await token.queryFilter(filterTo, fromBlock, latestBlock);
+
+      // 合併並去重
+      const allLogs = [...logsFrom, ...logsTo].sort((a, b) => b.blockNumber - a.blockNumber);
+      const seen = new Set();
+      const transfers = allLogs.filter(log => {
+        const key = log.transactionHash + log.logIndex;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      }).map(log => ({
         from: log.args.from,
         to: log.args.to,
         value: ethers.formatUnits(log.args.value, decimals)
       }));
+
       this.mtkTransfers = transfers;
       return transfers;
     },
