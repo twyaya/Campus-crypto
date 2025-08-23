@@ -41,7 +41,7 @@
                 <v-card-item>
                   <v-card-title>
                     <v-icon color="error" icon="mdi-alpha-t-box"></v-icon>
-                    <span>MTK花費總額: {{ walletStore.getTotalMTKSpent() }} MTK</span>
+                    <span>MTK交易總額: {{ walletStore.getTotalMTKSpent() }} MTK</span>
                 </v-card-title>
 
                 <v-card-subtitle>

@@ -75,8 +75,48 @@ const loadTasks = async () => {
       })
     }
     tasks.value = taskList
+    // 載入任務後檢查消費任務是否可 claim
+    await checkAndClaimTasks()
   } catch (err) {
     console.error('任務讀取失敗:', err)
+  }
+}
+
+// 取得 localStorage 的消費累積金額
+function getUserConsumeTotal() {
+  const v = localStorage.getItem('user-consume-total')
+  return v ? parseFloat(v) : 0
+}
+
+// 自動檢查消費任務是否達標並 claim
+async function checkAndClaimTasks() {
+  const consumeTotal = getUserConsumeTotal()
+  if (!window.ethereum) return
+  const provider = new ethers.BrowserProvider(window.ethereum)
+  const signer = await provider.getSigner()
+  const contract = new ethers.Contract(contractAddress, taskRewardABI, signer)
+  for (const task of tasks.value) {
+    const desc = parseDesc(task.description)
+    if (desc.type === '消費') {
+      // 從內容解析門檻金額
+      const match = desc.content.match(/消費滿\s*(\d+(?:\.\d+)?)\s*MTK/)
+      const target = match ? parseFloat(match[1]) : null
+      if (target && consumeTotal >= target) {
+        // 檢查是否已 claim
+        try {
+          const claimed = await contract.hasUserClaimed(task.taskId, await signer.getAddress())
+          if (!claimed) {
+            // 自動 claim
+            const tx = await contract.claimTask(task.taskId)
+            await tx.wait()
+            // 可選：彈窗提示
+            alert(`已自動領取消費任務獎勵：${desc.name}`)
+          }
+        } catch (e) {
+          // 失敗不提示
+        }
+      }
+    }
   }
 }
 
