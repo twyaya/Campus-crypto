@@ -60,6 +60,16 @@ async function publishTask() {
     }
     const tx = await contract.createTask(fullDesc, ethers.parseUnits(reward.value.toString(), decimals), maxClaims.value)
     await tx.wait()
+    // 新增：將 targetAmount 存入 localStorage
+    if (taskType.value === '消費') {
+      let taskTargets = JSON.parse(localStorage.getItem('task-target-amounts') || '{}')
+      // 取得最新任務ID（nextTaskId - 1 為剛發布的任務ID）
+      const provider2 = new ethers.BrowserProvider(window.ethereum)
+      const contract2 = new ethers.Contract(CONTRACT_ADDRESSES.taskReward, taskRewardABI.abi, provider2)
+      const nextId = await contract2.nextTaskId()
+      taskTargets[nextId - 1] = targetAmount.value
+      localStorage.setItem('task-target-amounts', JSON.stringify(taskTargets))
+    }
     successMsg.value = '✅ 任務已成功發布！'
     taskName.value = ''
     taskType.value = '消費'

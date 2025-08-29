@@ -89,6 +89,13 @@ function getUserConsumeTotal() {
 }
 
 // 自動檢查消費任務是否達標並 claim
+// 取得任務 targetAmount
+function getTaskTargetAmount(taskId) {
+  const taskTargets = JSON.parse(localStorage.getItem('task-target-amounts') || '{}')
+  return taskTargets[taskId] || null
+}
+
+// 自動檢查消費任務是否達標並 claim，並提示成功或失敗
 async function checkAndClaimTasks() {
   const consumeTotal = getUserConsumeTotal()
   if (!window.ethereum) return
@@ -98,22 +105,17 @@ async function checkAndClaimTasks() {
   for (const task of tasks.value) {
     const desc = parseDesc(task.description)
     if (desc.type === '消費') {
-      // 從內容解析門檻金額
-      const match = desc.content.match(/消費滿\s*(\d+(?:\.\d+)?)\s*MTK/)
-      const target = match ? parseFloat(match[1]) : null
+      const target = getTaskTargetAmount(task.taskId)
       if (target && consumeTotal >= target) {
-        // 檢查是否已 claim
         try {
           const claimed = await contract.hasUserClaimed(task.taskId, await signer.getAddress())
           if (!claimed) {
-            // 自動 claim
             const tx = await contract.claimTask(task.taskId)
             await tx.wait()
-            // 可選：彈窗提示
-            alert(`已自動領取消費任務獎勵：${desc.name}`)
+            alert(`✅ 已自動領取消費任務獎勵：${desc.name}`)
           }
         } catch (e) {
-          // 失敗不提示
+          alert(`❌ 任務領取失敗：${desc.name}\n${e?.shortMessage || e.message}`)
         }
       }
     }
